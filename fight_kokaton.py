@@ -195,7 +195,7 @@ def main():
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for i in range(NUM_OF_BOMBS)]
-    beam = None
+    beams = []
     els_lst = []
     scores = Score()
 
@@ -207,7 +207,7 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # キーが押されたら，かつ，キーの種類がスペースキーだったら
-                beam = Beam(bird)
+                beams.append(Beam(bird))
 
         
         screen.blit(bg_img, [0, 0])
@@ -220,25 +220,27 @@ def main():
                 time.sleep(1)
                 return
         for B, bomb in enumerate(bombs):
-            if beam is not None:
+            for i, beam in enumerate(beams):
                 if beam.rct.colliderect(bomb.rct):  # ビームと爆弾の衝突判定
                     # 撃墜＝Noneにする
                     scores.score += 1
                     els_lst.append(Explosion(bomb))
-                    beam = None
+                    beams[i] = None
                     bombs[B] = None
                     bird.change_img(6, screen)
                     pg.display.update()
                     time.sleep(1)
+            beams = [beam for beam in beams if beam is not None]
         bombs = [bomb for bomb in bombs if bomb is not None]
         els_lst = [els for els in els_lst if els.life > 0]
+        
 
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         for bomb in bombs:
             bomb.update(screen)
-        if beam is not None:
+        for beam in beams:
             beam.update(screen)
         for els in els_lst:
             els.update(screen)
