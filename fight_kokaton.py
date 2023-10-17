@@ -169,6 +169,26 @@ class Explosion:
             screen.blit(self.lst[1], self.rct)
 
 
+class Score:
+    def __init__(self):
+        """
+        スコア表示のインスタンスを作成する
+        """
+        self.font = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
+        self.color = (0, 0, 255)
+        self.score = 0
+        self.img = self.font.render(f"スコア: {self.score}", 0, self.color)
+        self.rct = self.img.get_rect()
+        self.rct.center = (100, HEIGHT-50)
+    
+    def update(self, screen: pg.Surface):
+        """
+        スコアの経過を設定する
+        引数: 画面surface
+        """
+        self.img = self.font.render(f"スコア: {self.score}", 0, self.color)
+        screen.blit(self.img, self.rct)
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -177,6 +197,7 @@ def main():
     bombs = [Bomb() for i in range(NUM_OF_BOMBS)]
     beam = None
     els_lst = []
+    scores = Score()
 
     clock = pg.time.Clock()
     tmr = 0
@@ -202,6 +223,7 @@ def main():
             if beam is not None:
                 if beam.rct.colliderect(bomb.rct):  # ビームと爆弾の衝突判定
                     # 撃墜＝Noneにする
+                    scores.score += 1
                     els_lst.append(Explosion(bomb))
                     beam = None
                     bombs[B] = None
@@ -220,6 +242,7 @@ def main():
             beam.update(screen)
         for els in els_lst:
             els.update(screen)
+        scores.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
