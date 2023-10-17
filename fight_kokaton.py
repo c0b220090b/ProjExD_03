@@ -155,7 +155,7 @@ class Explosion:
         self.lst.append(pg.transform.flip(self.gif, True, True))
         self.rct = self.gif.get_rect()
         self.rct.center = bomb.rct.center
-        self.life = 45
+        self.life = random.randint(38, 62)
     
     def update(self, screen: pg.Surface):
         """
